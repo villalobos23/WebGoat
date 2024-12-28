@@ -7,6 +7,16 @@ on:
 jobs:
     trivy:
         runs-on: ubuntu-latest
+        permissions:
+          # required for all workflows
+          security-events: write
+    
+          # required to fetch internal or private CodeQL packs
+          packages: read
+    
+          # only required for workflows in private repositories
+          actions: read
+          contents: read
         steps:
             -   uses: actions/checkout@v4
             
@@ -25,7 +35,7 @@ jobs:
                     restore-keys: ${{ runner.os }}-m2-
                     
             -   name: Build with Maven
-                run: mvn -B --no-transfer-progress verify
+                run: mvn -B verify --file pom.xml
                 
             -   name: "Set up QEMU"
                 if: runner.os == 'Linux'
